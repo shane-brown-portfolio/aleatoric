@@ -9,6 +9,19 @@ MAX_KEY = 69  # A4
 MIN_TEMPO = 80
 MAX_TEMPO = 160
 
+CHORD_LOOPS = [
+    ["I", "IV", "ii", "V"],
+    ["I", "vi", "ii", "V"],
+    ["I", "iii", "IV", "iv"],
+    ["I", "V", "ii", "V"],
+    ["I", "vi", "IV", "V"],
+    ["IV", "I", "vi", "IV"],
+    ["I", "V", "vi", "I"],
+    ["I", "IV", "iv", "I"],
+    ["IV", "V", "I", "I"],
+    ["vi", "IV", "I", "V"],
+]
+
 def parse_args():
     """Parse command-line arguments."""
 
@@ -60,6 +73,10 @@ def random_tempo():
     """Generate a random tempo within the specified range."""
     return random.randint(MIN_TEMPO, MAX_TEMPO)
 
+def random_chord_loop():
+    """Select a random chord loop from the predefined list."""
+    return random.choice(CHORD_LOOPS)
+
 def main():
     args = parse_args()
 
@@ -79,6 +96,10 @@ def main():
 
     print("Scale:")
     print(scale)
+
+    loop = random_chord_loop()
+    print("Chord Loop:")
+    print(loop)
 
 if __name__ == "__main__":
     main()
