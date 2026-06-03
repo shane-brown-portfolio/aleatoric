@@ -9,6 +9,8 @@ MAX_KEY = 69  # A4
 MIN_TEMPO = 80
 MAX_TEMPO = 160
 
+NOTES_PER_MEASURE = 8
+
 CHORD_LOOPS = [
     ["I", "IV", "ii", "V"],
     ["I", "vi", "ii", "V"],
@@ -117,16 +119,23 @@ def assign_loops_to_labels(labels):
 
 def build_chord(scale, roman):
     """
-    Build a simple triad using notes from the major scale.
-    Return a list of notes for the chord.
+    Build a triad by selecting the root, third, and fifth scale degrees relative
+    to the chord root. Return a list of notes for the chord.
     """
     # Define Roman numeral to degree mapping
     root_index = ROMAN_TO_DEGREE[roman]
+    third_index = root_index + 2
+    fifth_index = root_index + 4
 
     root = scale[root_index]
+    third = scale[third_index % 7]
+    fifth = scale[fifth_index % 7]
 
-    third = scale[(root_index + 2) % len(scale)]
-    fifth = scale[(root_index + 4) % len(scale)]
+    if third <= root:
+        third += 12
+
+    if fifth <= root:
+        fifth += 12
 
     return [root, third, fifth]
 
@@ -141,6 +150,55 @@ def build_progression(scale, loop):
         progression.append(build_chord(scale, roman))
 
     return progression
+
+def build_song_progression(labels, assignments, scale):
+    """
+    Build a song progression based on the labels and assignments.
+    Return a list of all the chords for the song.
+    """
+    song = []
+
+    for label in labels:
+        loop = assignments[label]
+        progression = build_progression(scale, loop)
+        song.extend(progression)
+
+    return song
+
+
+def choose_melody_note(chord, scale):
+    """
+    Choose a random note from the given chord or a non-chord note if it's not present.
+    Return the chosen note.
+    """
+    val = random.random()
+
+    # 80% chord tones, 20% non-chord scale tones
+    if val < 0.8:
+        return random.choice(chord)
+
+    non_chord_notes = []
+
+    for note in scale:
+        if note not in chord:
+            non_chord_notes.append(note)
+
+    return random.choice(non_chord_notes)
+
+
+def generate_melody(song_progression, scale):
+    """
+    Generate an eighth-note melody over the entire song.
+    Each chord contributes NOTES_PER_MEASURE melody notes.
+    """
+    melody = []
+
+    for chord in song_progression:
+        for _ in range(NOTES_PER_MEASURE):
+            note = choose_melody_note(chord, scale)
+            melody.append(note)
+
+    return melody
 
 def main():
     args = parse_args()
@@ -162,10 +220,6 @@ def main():
     print("Scale:")
     print(scale)
 
-    loop = random_chord_loop()
-    print("Chord Loop:")
-    print(loop)
-
     structure = random_song_structure()
     print("\nSong Structure:", end=' ')
     print(structure)
@@ -184,6 +238,16 @@ def main():
     for label, loop in assignments.items():
         progression = build_progression(scale, loop)
         print(f"{label}: {progression}")
+    
+    print("\nSong Chords:")
+    song_progression = build_song_progression(labels, assignments, scale)
+
+    for index, chord in enumerate(song_progression):
+        print(index + 1, chord)
+    
+    melody = generate_melody(song_progression, scale)
+    print(f"\nGenerated {len(melody)} melody notes (show last 20):")
+    print(melody[:20])
 
 if __name__ == "__main__":
     main()
