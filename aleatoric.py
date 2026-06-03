@@ -98,6 +98,25 @@ def get_structure_labels(structure):
 
     return labels
 
+def assign_loops_to_labels(labels):
+    """
+    Assign loops to labels based on the unique alphabet characters in the structure.
+    Return a dictionary mapping each label to its corresponding loop.
+    """
+    # Get unique labels from song structure
+    unique_labels = sorted(set(labels))
+
+    # Shuffle the available loops to ensure randomness
+    available_loops = CHORD_LOOPS.copy()
+    random.shuffle(available_loops)
+
+    # Assign each label to a loop until all labels are assigned
+    assignments = {}
+    for label in unique_labels:
+        assignments[label] = available_loops.pop()
+
+    return assignments
+
 def main():
     args = parse_args()
 
@@ -128,6 +147,12 @@ def main():
 
     labels = get_structure_labels(structure)
     print(labels)
+
+    assignments = assign_loops_to_labels(labels)
+    print("\nAssignments:")
+
+    for label, loop in assignments.items():
+        print(f"{label}: {loop}")
 
 if __name__ == "__main__":
     main()
