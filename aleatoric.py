@@ -1,6 +1,8 @@
 import argparse
-import math
 import random
+import numpy as np
+from scipy.io.wavfile import write
+import sounddevice as sd
 
 # Define Constants
 MIN_KEY = 57  # A3
@@ -10,6 +12,9 @@ MIN_TEMPO = 80
 MAX_TEMPO = 160
 
 NOTES_PER_MEASURE = 8
+
+SAMPLE_RATE = 48000
+MAX_AMPLITUDE = 0.5
 
 CHORD_LOOPS = [
     ["I", "IV", "ii", "V"],
@@ -57,6 +62,18 @@ def note_to_frequency(note_number):
     """
     return 440.0 * (2 ** ((note_number - 69) / 12))
 
+def generate_sawtooth(frequency, duration):
+    """
+    Generate a sawtooth waveform for a single note.
+    Return a numpy array of audio samples.
+    """
+    sample_count = int(duration * SAMPLE_RATE)
+    samples = np.arange(sample_count)
+
+    waveform = (2 * ((samples * frequency / SAMPLE_RATE) % 1)) - 1
+
+    return waveform * MAX_AMPLITUDE
+
 
 def build_major_scale(root_note):
     """
@@ -78,6 +95,11 @@ def random_key():
 def random_tempo():
     """Generate a random tempo within the specified range."""
     return random.randint(MIN_TEMPO, MAX_TEMPO)
+
+def eighth_note_duration(tempo):
+    """Calculate the duration of an eighth note in seconds."""
+    quarter_note_duration = 60 / tempo
+    return quarter_note_duration / 2
 
 def random_chord_loop():
     """Select a random chord loop from the predefined list."""
@@ -200,6 +222,29 @@ def generate_melody(song_progression, scale):
 
     return melody
 
+def generate_song_audio(melody, tempo):
+    """Generate audio samples for the entire melody."""
+    
+    note_duration = eighth_note_duration(tempo)
+    
+    audio_segments = []
+    for note in melody:
+        frequency = note_to_frequency(note)
+        segment = generate_sawtooth(frequency, note_duration)
+        audio_segments.append(segment)
+
+    return np.concatenate(audio_segments)
+
+
+def normalize_audio(audio):
+    """Normalize audio to prevent clipping."""
+    peak = np.max(np.abs(audio))
+
+    if peak == 0:
+        return audio
+
+    return audio / peak
+
 def main():
     args = parse_args()
 
@@ -248,6 +293,11 @@ def main():
     melody = generate_melody(song_progression, scale)
     print(f"\nGenerated {len(melody)} melody notes (show last 20):")
     print(melody[:20])
+
+    audio = generate_song_audio(melody, tempo)
+
+    audio = normalize_audio(audio)
+    print(f"\nGenerated {len(audio)} audio samples")
 
 if __name__ == "__main__":
     main()
