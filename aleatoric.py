@@ -22,6 +22,12 @@ CHORD_LOOPS = [
     ["vi", "IV", "I", "V"],
 ]
 
+SONG_STRUCTURES = [
+    "AABB/CC",
+    "ABAB/CD",
+    "AB/CDDD",
+]
+
 def parse_args():
     """Parse command-line arguments."""
 
@@ -77,6 +83,21 @@ def random_chord_loop():
     """Select a random chord loop from the predefined list."""
     return random.choice(CHORD_LOOPS)
 
+def random_song_structure():
+    """Select a random song structure from the predefined list."""
+    return random.choice(SONG_STRUCTURES)
+
+def get_structure_labels(structure):
+    """Extract labels from the song structure string."""
+    labels = []
+
+    for char in structure:
+        # Add each alphabet character to the list
+        if char.isalpha():
+            labels.append(char)
+
+    return labels
+
 def main():
     args = parse_args()
 
@@ -100,6 +121,13 @@ def main():
     loop = random_chord_loop()
     print("Chord Loop:")
     print(loop)
+
+    structure = random_song_structure()
+    print("\nSong Structure:", end=' ')
+    print(structure)
+
+    labels = get_structure_labels(structure)
+    print(labels)
 
 if __name__ == "__main__":
     main()
