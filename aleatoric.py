@@ -101,10 +101,6 @@ def eighth_note_duration(tempo):
     quarter_note_duration = 60 / tempo
     return quarter_note_duration / 2
 
-def random_chord_loop():
-    """Select a random chord loop from the predefined list."""
-    return random.choice(CHORD_LOOPS)
-
 def random_song_structure():
     """Select a random song structure from the predefined list."""
     return random.choice(SONG_STRUCTURES)
@@ -245,15 +241,25 @@ def normalize_audio(audio):
 
     return audio / peak
 
+def write_wav(filename, audio):
+    """Write audio data to a WAV file."""
+    audio_16bit = np.int16(audio * 32767)
+    write(filename, SAMPLE_RATE, audio_16bit)
+
+def play_audio(audio):
+    """Play generated audio through speakers."""
+    sd.play(audio, SAMPLE_RATE)
+    sd.wait()
+
 def main():
     args = parse_args()
 
     print("Aleatoric Music Generator", end=" - ")
 
     if args.output:
-        print(f"Output file: {args.output}\n")
+        print(f"Output File: {args.output}\n")
     else:
-        print("Playback mode\n")
+        print("Playback Mode\n")
     
     root_note = random_key()
     tempo = random_tempo()
@@ -291,13 +297,20 @@ def main():
         print(index + 1, chord)
     
     melody = generate_melody(song_progression, scale)
-    print(f"\nGenerated {len(melody)} melody notes (show last 20):")
+    print(f"\nGenerated {len(melody)} melody notes (show first 20):")
     print(melody[:20])
 
     audio = generate_song_audio(melody, tempo)
 
     audio = normalize_audio(audio)
     print(f"\nGenerated {len(audio)} audio samples")
+
+    if args.output:
+        write_wav(args.output, audio)
+        print(f"Wrote audio to {args.output}")
+    else:
+        print("Playing audio...")
+        play_audio(audio)
 
 if __name__ == "__main__":
     main()
