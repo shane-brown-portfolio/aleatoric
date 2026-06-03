@@ -22,11 +22,9 @@ CHORD_LOOPS = [
     ["vi", "IV", "I", "V"],
 ]
 
-SONG_STRUCTURES = [
-    "AABB/CC",
-    "ABAB/CD",
-    "AB/CDDD",
-]
+ROMAN_TO_DEGREE = {"I": 0, "ii": 1, "iii": 2, "IV": 3, "iv": 3, "V": 4, "vi": 5}
+
+SONG_STRUCTURES = ["AABB/CC", "ABAB/CD", "AB/CDDD"]
 
 def parse_args():
     """Parse command-line arguments."""
@@ -117,6 +115,33 @@ def assign_loops_to_labels(labels):
 
     return assignments
 
+def build_chord(scale, roman):
+    """
+    Build a simple triad using notes from the major scale.
+    Return a list of notes for the chord.
+    """
+    # Define Roman numeral to degree mapping
+    root_index = ROMAN_TO_DEGREE[roman]
+
+    root = scale[root_index]
+
+    third = scale[(root_index + 2) % len(scale)]
+    fifth = scale[(root_index + 4) % len(scale)]
+
+    return [root, third, fifth]
+
+def build_progression(scale, loop):
+    """
+    Build a progression of chords based on the loop.
+    Return a list of chords for the progression.
+    """
+    progression = []
+
+    for roman in loop:
+        progression.append(build_chord(scale, roman))
+
+    return progression
+
 def main():
     args = parse_args()
 
@@ -153,6 +178,12 @@ def main():
 
     for label, loop in assignments.items():
         print(f"{label}: {loop}")
+    
+    print("\nProgressions:")
+
+    for label, loop in assignments.items():
+        progression = build_progression(scale, loop)
+        print(f"{label}: {progression}")
 
 if __name__ == "__main__":
     main()
