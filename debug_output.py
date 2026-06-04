@@ -36,4 +36,18 @@ def print_generation_results(song_progression, melody, audio):
     print(f"\nGenerated {len(melody)} melody notes (show first 20):")
     print(melody[:20])
 
-    print(f"\nGenerated {len(audio)} audio samples...\n")
+    print(f"\nGenerated {len(audio)} audio samples...")
+
+
+def print_bass_results(bass_line):
+    """Print generated bass notes."""
+
+    print("\nBass Line:")
+    print(bass_line)
+
+
+def print_harmony_results(harmony):
+    """Print generated harmony notes."""
+
+    print(f"\nGenerated {len(harmony)} harmony notes (show first 20):")
+    print(harmony[:20])

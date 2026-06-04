@@ -5,14 +5,17 @@ import audio
 from debug_output import (
     print_song_settings,
     print_song_structure,
-    print_generation_results
+    print_generation_results,
+    print_bass_results,
+    print_harmony_results
 )
 
 def parse_args():
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description="Generate aleatoric music."
+        description="Generate aleatoric music.",
+        allow_abbrev=False
     )
 
     parser.add_argument(
@@ -85,26 +88,34 @@ def main():
     melody = music.generate_melody(song_progression, scale)
     audio_data = audio.generate_song_audio(melody, tempo)
 
+    if args.verbose:
+        print_generation_results(song_progression, melody, audio_data)
+
     if args.bass:
         bass_line = music.generate_bass_line(song_progression)
+
+        if args.verbose:
+            print_bass_results(bass_line)
+
         bass_audio = audio.generate_bass_audio(bass_line, tempo)
         audio_data = audio.mix_audio_tracks(audio_data, bass_audio)
     
     if args.harmony:
         harmony = music.generate_harmony(song_progression, melody)
+
+        if args.verbose:
+            print_harmony_results(harmony)
+
         harmony_audio = audio.generate_song_audio(harmony, tempo)
         audio_data = audio.mix_audio_tracks(audio_data, harmony_audio)
 
     audio_data = audio.normalize_audio(audio_data)
 
-    if args.verbose:
-        print_generation_results(song_progression, melody, audio_data)
-
     if args.output:
         audio.write_wav(args.output, audio_data)
-        print(f"Wrote audio to {args.output}")
+        print(f"\nWrote audio to {args.output}")
     else:
-        print("Playing audio...")
+        print("\nPlaying audio...")
         audio.play_audio(audio_data)
 
 

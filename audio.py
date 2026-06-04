@@ -81,4 +81,5 @@ def play_audio(audio):
 
 def mix_audio_tracks(track_a, track_b):
     """Mix two audio tracks together."""
-    return track_a + track_b
+    min_length = min(len(track_a), len(track_b))
+    return track_a[:min_length] + track_b[:min_length]
