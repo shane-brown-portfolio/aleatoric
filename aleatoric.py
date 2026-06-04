@@ -4,6 +4,12 @@ import numpy as np
 from scipy.io.wavfile import write
 import sounddevice as sd
 
+from debug_output import (
+    print_song_settings,
+    print_song_structure,
+    print_generation_results
+)
+
 # Define Constants
 MIN_KEY = 57  # A3
 MAX_KEY = 69  # A4
@@ -51,6 +57,13 @@ def parse_args():
         type=int,
         default=120,
         help="Set the tempo (BPM)."
+    )
+
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Display detailed song generation information."
     )
 
     return parser.parse_args()
@@ -261,49 +274,32 @@ def main():
     else:
         print("Playback Mode\n")
     
+    if args.tempo:
+        tempo = args.tempo
+    else:
+        random_tempo()
+    
     root_note = random_key()
-    tempo = random_tempo()
     scale = build_major_scale(root_note)
 
-    print(f"Key MIDI Note: {root_note}")
-    print(f"Tempo: {tempo} BPM")
-
-    print("Scale:")
-    print(scale)
+    if args.verbose:
+        print_song_settings(root_note, tempo, scale)
 
     structure = random_song_structure()
-    print("\nSong Structure:", end=' ')
-    print(structure)
-
     labels = get_structure_labels(structure)
-    print(labels)
-
     assignments = assign_loops_to_labels(labels)
-    print("\nAssignments:")
 
-    for label, loop in assignments.items():
-        print(f"{label}: {loop}")
+    if args.verbose:
+        print_song_structure(structure, labels, assignments,
+                             scale, build_progression)
     
-    print("\nProgressions:")
-
-    for label, loop in assignments.items():
-        progression = build_progression(scale, loop)
-        print(f"{label}: {progression}")
-    
-    print("\nSong Chords:")
     song_progression = build_song_progression(labels, assignments, scale)
-
-    for index, chord in enumerate(song_progression):
-        print(index + 1, chord)
-    
     melody = generate_melody(song_progression, scale)
-    print(f"\nGenerated {len(melody)} melody notes (show first 20):")
-    print(melody[:20])
-
     audio = generate_song_audio(melody, tempo)
-
     audio = normalize_audio(audio)
-    print(f"\nGenerated {len(audio)} audio samples")
+
+    if args.verbose:
+        print_generation_results(song_progression, melody, audio)
 
     if args.output:
         write_wav(args.output, audio)
