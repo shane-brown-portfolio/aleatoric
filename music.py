@@ -205,3 +205,44 @@ def generate_bass_line(song_progression):
         bass_line.append(bass_note)
 
     return bass_line
+
+
+def generate_harmony(song_progression, melody):
+    """
+    Generate harmony notes by selecting the closest chord note below each melody note.
+    """
+    harmony = []
+    melody_index = 0
+
+    for chord in song_progression:
+        chord_tones = []
+
+        for note in chord:
+            normalized = note
+
+            # Convert chord tones back into a single octave for note comparisons
+            while normalized > chord[0] + 11:
+                normalized -= 12
+
+            chord_tones.append(normalized)
+
+        for _ in range(NOTES_PER_MEASURE):
+            melody_note = melody[melody_index]
+            lower_chord_tones = []
+
+            # Find all chord tones that are lower than the melody note
+            for chord_note in chord_tones:
+                if chord_note < melody_note:
+                    lower_chord_tones.append(chord_note)
+
+            if lower_chord_tones:
+                # Highest chord note below melody
+                harmony_note = max(lower_chord_tones)
+            else:
+                # Fallback to lowest note in chord if all notes are higher than melody
+                harmony_note = min(chord_tones)
+
+            harmony.append(harmony_note)
+            melody_index += 1
+
+    return harmony

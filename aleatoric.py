@@ -40,6 +40,12 @@ def parse_args():
         help="Add a bass line two octaves below the chord root."
     )
 
+    parser.add_argument(
+        "--harmony",
+        action="store_true",
+        help="Add harmony using the closest chord tone below the melody."
+    )
+
     return parser.parse_args()
 
 
@@ -83,6 +89,11 @@ def main():
         bass_line = music.generate_bass_line(song_progression)
         bass_audio = audio.generate_bass_audio(bass_line, tempo)
         audio_data = audio.mix_audio_tracks(audio_data, bass_audio)
+    
+    if args.harmony:
+        harmony = music.generate_harmony(song_progression, melody)
+        harmony_audio = audio.generate_song_audio(harmony, tempo)
+        audio_data = audio.mix_audio_tracks(audio_data, harmony_audio)
 
     audio_data = audio.normalize_audio(audio_data)
 
