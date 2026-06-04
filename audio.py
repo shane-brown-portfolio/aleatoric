@@ -44,6 +44,19 @@ def generate_song_audio(melody, tempo):
     return np.concatenate(audio_segments)
 
 
+def generate_bass_audio(bass_line, tempo):
+    """Generate bass audio using one note per measure."""
+    measure_duration = eighth_note_duration(tempo) * 8    # 8 beats per measure
+
+    audio_segments = []
+    for note in bass_line:
+        frequency = note_to_frequency(note)
+        segment = generate_sawtooth(frequency, measure_duration)
+        audio_segments.append(segment)
+
+    return np.concatenate(audio_segments)
+
+
 def normalize_audio(audio):
     """Normalize audio to prevent clipping."""
     peak = np.max(np.abs(audio))
@@ -64,3 +77,8 @@ def play_audio(audio):
     """Play generated audio through speakers."""
     sd.play(audio, SAMPLE_RATE)
     sd.wait()
+
+
+def mix_audio_tracks(track_a, track_b):
+    """Mix two audio tracks together."""
+    return track_a + track_b

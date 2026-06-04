@@ -189,3 +189,19 @@ def generate_melody(song_progression, scale):
             melody.append(note)
 
     return melody
+
+
+def generate_bass_line(song_progression):
+    """
+    Generate one bass note per measure using the root note of each chord.
+    Each bass note is two octaves below the root note.
+    """
+    bass_line = []
+
+    for chord in song_progression:
+        root = chord[0]
+        bass_note = root - 24
+
+        bass_line.append(bass_note)
+
+    return bass_line

@@ -34,6 +34,12 @@ def parse_args():
         help="Display detailed song generation information."
     )
 
+    parser.add_argument(
+        "--bass",
+        action="store_true",
+        help="Add a bass line two octaves below the chord root."
+    )
+
     return parser.parse_args()
 
 
@@ -72,6 +78,12 @@ def main():
     song_progression = music.build_song_progression(labels, assignments, scale)
     melody = music.generate_melody(song_progression, scale)
     audio_data = audio.generate_song_audio(melody, tempo)
+
+    if args.bass:
+        bass_line = music.generate_bass_line(song_progression)
+        bass_audio = audio.generate_bass_audio(bass_line, tempo)
+        audio_data = audio.mix_audio_tracks(audio_data, bass_audio)
+
     audio_data = audio.normalize_audio(audio_data)
 
     if args.verbose:
