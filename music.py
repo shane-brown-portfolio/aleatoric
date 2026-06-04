@@ -158,10 +158,17 @@ def choose_melody_note(chord, scale):
 
     # 80% chord tones, 20% non-chord scale tones
     if val < 0.8:
-        return random.choice(chord)
+        chord_tones = []
+        for note in chord:
+            # Move chord notes back into the original scale octave
+            while note > scale[-1]:
+                note -= 12
+
+            chord_tones.append(note)
+
+        return random.choice(chord_tones)
 
     non_chord_notes = []
-
     for note in scale:
         if note not in chord:
             non_chord_notes.append(note)
