@@ -35,17 +35,19 @@ Generate and play a random song:
 ```
 python3 aleatoric.py
 ```
-Generate a song with verbose output:
+The following command-line arguments are available:
+
+| Argument | Description |
+| ------------ | ----------- |
+| `-v`, `--verbose`  | Display detailed information about the generated song, including scales, chord progressions, and notes. |
+| `--tempo` BPM | Use a specific tempo instead of selecting a random tempo. BPM must be between 80 and 160. |
+| `--bass` | Add a bass line that plays the root note of each chord two octaves lower for the duration of each measure. |
+| `--harmony` | Add a harmony line by playing the closest chord tone below each melody note. |
+| `--output` FILE.wav | Write the generated audio to a WAV file instead of only playing it through the speakers. |
+
+Arguments may be combined:
 ```
-python3 aleatoric.py -v
-```
-Generate a song at a specific tempo:
-```
-python3 aleatoric.py --tempo 120
-```
-Write the generated song to a WAV file:
-```
-python3 aleatoric.py --output ALEATORIC.wav
+python3 aleatoric.py -v --tempo 120 --bass --harmony --output ALEATORIC.wav
 ```
 
 ## Output
@@ -120,8 +122,6 @@ During development, the verbose output mode was very useful because it made it e
 
 ## Still To Be Done
 While the program successfully generates and synthesizes random songs, there are several possible improvements:
-- Add a bass accompaniment beneath the melody
-- Create a harmony mode where for each melody note the closest chord note below is also played
 - Add a drum track using white noise by picking a one-measure rhythm to use for every measure in the song
 - Improve song generation with rhythmic variation by picking a random note pattern for the verse, and another for the chorus
 - Add note name display alongside MIDI note numbers
