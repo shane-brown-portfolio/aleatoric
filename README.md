@@ -39,11 +39,11 @@ The following command-line arguments are available:
 
 | Argument | Description |
 | ------------ | ----------- |
-| `-v`, `--verbose`  | Display detailed information about the generated song, including scales, chord progressions, and notes. |
-| `--tempo` BPM | Use a specific tempo instead of selecting a random tempo. BPM must be between 80 and 160. |
-| `--bass` | Add a bass line that plays the root note of each chord two octaves lower for the duration of each measure. |
+| `-v`, `--verbose`  | Display detailed information about the generated song. |
+| `--tempo` BPM | Use a specific tempo instead of selecting a random tempo.<br><b>Note: BPM must be between 80 and 160.</b> |
+| `--bass` | Add a bass line using the chord root two octaves lower. |
 | `--harmony` | Add a harmony line by playing the closest chord tone below each melody note. |
-| `--output` FILE.wav | Write the generated audio to a WAV file instead of only playing it through the speakers. |
+| `--output` FILE.wav | Write the generated audio to a WAV file. |
 
 Arguments may be combined:
 ```
