@@ -5,4 +5,4 @@ venv/
 
 # Python cache
 __pycache__/
-*.pycS
+*.pyc
