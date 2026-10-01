@@ -176,17 +176,26 @@ def choose_melody_note(chord, scale):
     return random.choice(non_chord_notes)
 
 
-def generate_melody(song_progression, scale):
+def generate_melody(labels, assignments, scale):
     """
     Generate an eighth-note melody over the entire song.
     Each chord contributes NOTES_PER_MEASURE melody notes.
+    One melody is generated per label and reused wherever the label repeats.
     """
+    melodies = {}
+
+    for label in set(labels):
+        progression = build_progression(scale, assignments[label])
+        melodies[label] = []
+
+        for chord in progression:
+            for _ in range(NOTES_PER_MEASURE):
+                melodies[label].append(choose_melody_note(chord, scale))
+
     melody = []
 
-    for chord in song_progression:
-        for _ in range(NOTES_PER_MEASURE):
-            note = choose_melody_note(chord, scale)
-            melody.append(note)
+    for label in labels:
+        melody.extend(melodies[label])
 
     return melody
 

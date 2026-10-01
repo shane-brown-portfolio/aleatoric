@@ -85,7 +85,7 @@ def main():
                              scale, music.build_progression)
     
     song_progression = music.build_song_progression(labels, assignments, scale)
-    melody = music.generate_melody(song_progression, scale)
+    melody = music.generate_melody(labels, assignments, scale)
     audio_data = audio.generate_song_audio(melody, tempo)
 
     if args.verbose:
